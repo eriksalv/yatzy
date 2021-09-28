@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"> 
+        <title></title>
+		<style>
+			* {
+				border-sizing:border-box;
+				font-family:"Trebuchet MS", arial, sans-serif;
+			}
+			#innpakning {
+				width:800px;
+				margin:auto;
+				display:flex;
+				flex-wrap:wrap;
+				border:1px solid gray;
+			}
+			#innpakning #overskrift {
+				flex-basis:100%;
+				text-align:center;
+				border:1px solid gray;
+				padding:10px;
+			}
+			#terningerBilder {
+				flex-basis:100%;
+				display:flex;
+				border:1px solid gray;
+				padding:40px;
+			}
+			#terningerBilder .terningbilde, #terningerBilder .tilSide, #terningerBilder .over {
+				flex:1;
+				object-fit:contain;
+				height:100px;
+				border:2px solid black;
+				border-radius:5px;
+				margin:15px;
+			}
+			#terningerBilder .tilSide {
+				border:2px solid blue;
+			}
+			#terningerBilder .over {
+				border:2px solid green;
+			}
+			#kastDiv {
+				flex-basis:100%;
+				display:flex;
+				flex-wrap:wrap;
+				justify-content:center;
+				align-items:center;
+				border:1px solid gray;
+				padding:10px;
+			}
+			#kastDiv #kast {
+				background-color: #4CAF50;
+				border: none;
+				color: white;
+				text-align: center;
+				text-decoration: none;
+				display: inline-block;
+				font-size: 16px;
+				transition-duration: 0.4s;
+				cursor: pointer;
+				border-radius:5px;
+				padding:8px 16px;
+			}
+			#kastDiv #kast:hover {
+				background-color:darkgreen;
+			}
+			#resultater {
+				flex:100%;
+				display:flex;
+				flex-wrap:wrap;
+			}
+			#resultater .resultatDiv {
+				flex:1;
+				display:flex;
+				flex-direction:column;
+			}
+			#resultater .resultatDiv div {
+				flex:100%;
+				display:flex;
+				flex-wrap:wrap;
+			}
+			#resultater .resultatDiv div label {
+				flex:3;
+				border:1px solid gray;
+				padding:10px;
+			}
+			#resultater .resultatDiv div div {
+				flex:1;
+				border:1px solid gray;
+				padding:10px;
+				transition-duration:0.4s;
+			}
+			.poengValg {
+				cursor:pointer;
+				background-color:lightgray;
+			}
+			.poengValg:hover {
+				background-color:darkgray;
+			}
+			.strykValg {
+				cursor:pointer;
+				background-color:red;
+			}
+			.laast {
+				background-color:#4CAF50;
+			}
+		</style>
+
+    </head>
+    <body>
+		<div id="innpakning">
+			<div id="overskrift">
+				<h1>Yatzy</h1>
+				<h3>Trykk på "kast" for å begynne spillet</h3>
+			</div>
+			<div id="terningerBilder">
+				<img class="terningbilde" src="bilder/1.jpg">
+				<img class="terningbilde" src="bilder/1.jpg">
+				<img class="terningbilde" src="bilder/1.jpg">
+				<img class="terningbilde" src="bilder/1.jpg">
+				<img class="terningbilde" src="bilder/1.jpg">
+				<audio id="terningLyd">
+					<source src="bilder/terningkast.ogg" type="audio/ogg">
+				</audio>
+			</div>
+			<div id="kastDiv">
+				<button id="kast">Kast</button>
+			</div>
+			<div id="resultater">
+				<div class="resultatDiv">
+					<div>
+						<label>Enere</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>Toere</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>Treere</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>Firere</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>Femmere</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>Seskere</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label><b>Sum</b></label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label><b>Bonus</b></label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<div></div>
+					</div>
+					<div>
+						<div></div>
+					</div>
+				</div>
+				<div class="resultatDiv">
+					<div>
+						<label>1 par</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>2 par</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>3 like</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>4 like</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>Liten straight</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>Stor straight</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>Hus</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>Sjanse</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label>Yatzy</label>
+						<div class="poeng"></div>
+					</div>
+					<div>
+						<label><b>Totalsum</b></label>
+						<div class="poeng"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script>
+		window.onload = oppdater; //window.onload kjøres når programmet startes. Ber da om at funksjonen "oppdater" kjøres.
+		
+		function oppdater() { //legg til audio
+			var terningLydEl = document.querySelector("#terningLyd");
+			var innpakningEl = document.querySelector("#innpakning");
+			var terningerEl = document.querySelectorAll(".terningbilde");
+			var kastKnappEl = document.querySelector("#kast");
+			kastKnappEl.addEventListener("click", kast);
+			var poengEl = document.querySelectorAll(".poeng");
+			var underoverskriftEl = document.querySelector("h3");
+			var terninger = [1, 1, 1, 1, 1];
+			var antallKast = 3;
+			var totalSum = 0;
+			var utfortBonus = false;
+			var fullfort = [false, false, false, false, false, false];
+			var runder = 0;
+			
+			function kast() {
+				terningLydEl.play();
+				for(var i=0;i<terninger.length;i++) {
+					if(terningerEl[i].className!=="terningbilde tilSide") { //skal ikke kaste terninger som har blitt lagt til side
+						var rand = (Math.floor(Math.random() * 6) + 1);
+						terninger[i]=rand;
+						terningerEl[i].src = "bilder/" + rand + ".jpg"; //bruker det tilfeldige tallet til å endre hvilket terningbilde som skal vises
+					}
+				}
+				if(antallKast<=1) { //når man har kastet 3 ganger skal det ikke lenger være mulig å trykke på terningbildene, og beregnPoeng funksjonen skal kjøres
+					terningerEl.forEach(item => {
+						item.removeEventListener("click", tilSide);
+						item.className = "over";
+					}
+					);
+					beregnPoeng();
+				}
+				else { //hvis man fortsatt har kast igjen skal det være mulig å trykke på terningene for å legge de til side
+					terningerEl.forEach(item => {
+						item.addEventListener("click", tilSide);
+					}
+					);
+					antallKast--;
+					underoverskriftEl.innerHTML = antallKast + " kast igjen";
+				}
+				//console.log(innpakningEl);
+			}
+			function tilSide(e) {
+				e.target.classList.toggle("tilSide"); //skifter mellom to class-navn som bestemmer hvilke terninger man legger til side eller ikke
+			}			
+			function beregnPoeng() {
+				underoverskriftEl.innerHTML = "Ingen kast igjen, velg en kombinasjonstype";
+				var stryk = true; //hvis stryk-variabelen fortsatt er true på slutten av funksjonen, altså hvis det ikke er noen gyldige kombinasjoner å gi poeng for, må man velge et felt som man stryker
+				kastKnappEl.removeEventListener("click", kast);
+				kastKnappEl.style.cursor = "not-allowed";
+				console.log(terninger);
+				
+				var midlertidigPoeng = [];
+				for(var i=0;i<poengEl.length;i++) {
+					midlertidigPoeng.push(0);
+					if(i==0 && poengEl[i].className!=="laast") { //enere
+						for(var k=0;k<terninger.length;k++) {
+							if(terninger[k]==1) {
+								midlertidigPoeng[i] += 1;
+								poengEl[i].innerHTML=midlertidigPoeng[i];
+								poengEl[i].addEventListener("click", leggTil);
+								poengEl[i].className = "poengValg";
+								stryk = false;
+							}
+						}
+					}
+					if(i==1 && poengEl[i].className!=="laast") { //toere
+						for(var k=0;k<terninger.length;k++) {
+							if(terninger[k]==2) {
+								midlertidigPoeng[i] += 2;
+								poengEl[i].innerHTML=midlertidigPoeng[i];
+								poengEl[i].addEventListener("click", leggTil);
+								poengEl[i].className = "poengValg";
+								stryk = false;
+							}
+						}
+					}
+					if(i==2 && poengEl[i].className!=="laast") { //treere
+						for(var k=0;k<terninger.length;k++) {
+							if(terninger[k]==3) {
+								midlertidigPoeng[i] += 3;
+								poengEl[i].innerHTML=midlertidigPoeng[i];
+								poengEl[i].addEventListener("click", leggTil);
+								poengEl[i].className = "poengValg";
+								stryk = false;
+							}
+						}
+					}
+					if(i==3 && poengEl[i].className!=="laast") { //firere
+						for(var k=0;k<terninger.length;k++) {
+							if(terninger[k]==4) {
+								midlertidigPoeng[i] += 4;
+								poengEl[i].innerHTML=midlertidigPoeng[i];
+								poengEl[i].addEventListener("click", leggTil);
+								poengEl[i].className = "poengValg";
+								stryk = false;
+							}
+						}
+					}
+					if(i==4 && poengEl[i].className!=="laast") { //femmere
+						for(var k=0;k<terninger.length;k++) {
+							if(terninger[k]==5) {
+								midlertidigPoeng[i] += 5;
+								poengEl[i].innerHTML=midlertidigPoeng[i];
+								poengEl[i].addEventListener("click", leggTil);
+								poengEl[i].className = "poengValg";
+								stryk = false;
+							}
+						}
+					}
+					if(i==5 && poengEl[i].className!=="laast") { //seksere
+						for(var k=0;k<terninger.length;k++) {
+							if(terninger[k]==6) {
+								midlertidigPoeng[i] += 6;
+								poengEl[i].innerHTML=midlertidigPoeng[i];
+								poengEl[i].addEventListener("click", leggTil);
+								poengEl[i].className = "poengValg";
+								stryk = false;
+							}
+						}
+					}
+					if(i==8 && poengEl[i].className!=="laast") { //1 par
+						for(var k=0;k<terninger.length;k++) {
+							for(var j=0;j<terninger.length;j++) {
+								if(terninger[k]==terninger[j] && k!==j) {
+									var ny = terninger[k]+terninger[j];
+									if(ny>midlertidigPoeng[i]) { //hvis man har to forskjellige par, skal den mest verdifulle telle
+										midlertidigPoeng[i] = terninger[k]+terninger[j];
+									}
+									//console.log(terninger[k]);
+									//console.log(terninger[j]);
+									poengEl[i].innerHTML=midlertidigPoeng[i];
+									poengEl[i].addEventListener("click", leggTil);
+									poengEl[i].className = "poengValg";
+									stryk = false;
+								}
+							}
+						}
+					}
+					if(i==9 && poengEl[i].className!=="laast") { //2 par
+						for(var k=0;k<terninger.length;k++) {
+							for(var j=0;j<terninger.length;j++) {
+								if(terninger[k]==terninger[j] && k!==j) {
+									var par1 = terninger[k]+terninger[j];
+								}
+							}
+						}
+						for(var k=0;k<terninger.length;k++) {
+							for(var j=0;j<terninger.length;j++) {
+								if(terninger[k]==terninger[j] && k!==j && terninger[k]+terninger[j]!==par1) {
+									midlertidigPoeng[i] = par1+terninger[k]+terninger[j];
+									poengEl[i].innerHTML=midlertidigPoeng[i];
+									poengEl[i].addEventListener("click", leggTil);
+									poengEl[i].className = "poengValg";
+									stryk = false;
+								}
+							}
+						}
+					}
+					if(i==10 && poengEl[i].className!=="laast") { //3 like
+						for(var k=0;k<terninger.length;k++) {
+							for(var j=0;j<terninger.length;j++) {
+								if(terninger[k]==terninger[j] && k!==j) {
+									for(var s=0;s<terninger.length;s++) {
+										if(terninger[s]==terninger[j] && s!==j && s!==k) {
+											midlertidigPoeng[i] = terninger[k]+terninger[j]+terninger[s];
+											poengEl[i].innerHTML=midlertidigPoeng[i];
+											poengEl[i].addEventListener("click", leggTil);
+											poengEl[i].className = "poengValg";
+											stryk = false;
+										}
+									}
+								}
+							}
+						}
+					}
+					if(i==11 && poengEl[i].className!=="laast") { //4 like
+						for(var k=0;k<terninger.length;k++) {
+							for(var j=0;j<terninger.length;j++) {
+								if(terninger[k]==terninger[j] && k!==j) {
+									for(var s=0;s<terninger.length;s++) {
+										if(terninger[s]==terninger[j] && s!==j && s!==k) {
+											for(var a=0;a<terninger.length;a++) {
+												if(terninger[a]==terninger[s] && a!==s && a!==j && a!==k) {
+													midlertidigPoeng[i] = terninger[k]+terninger[j]+terninger[s]+terninger[a];
+													poengEl[i].innerHTML = midlertidigPoeng[i];
+													poengEl[i].addEventListener("click", leggTil);
+													poengEl[i].className = "poengValg";
+													stryk = false;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					if(i==12 && poengEl[i].className!=="laast") { //liten straight
+						terninger.sort(function(a, b){return a - b}); //sorterer terninger-arrayen i stigende rekkefølge
+						var litenStraight = [1, 2, 3, 4, 5];
+						var likeArrayer = skjekkArrayer(terninger, litenStraight); 
+						console.log(likeArrayer);
+						if(likeArrayer==true) {
+							midlertidigPoeng[i] = 15;
+							poengEl[i].innerHTML = midlertidigPoeng[i];
+							poengEl[i].addEventListener("click", leggTil);
+							poengEl[i].className = "poengValg";
+							stryk = false;
+						}
+					}
+					if(i==13 && poengEl[i].className!=="laast") { //stor straight
+						terninger.sort(function(a, b){return a - b}); //sorterer terninger-arrayen i stigende rekkefølge
+						var storStraight = [2, 3, 4, 5, 6];
+						var likeArrayer = skjekkArrayer(terninger, storStraight); //hvis den sorterte terninger-arrayen er lik storStraight-arrayen er likeArrayer=true
+						//console.log(likeArrayer);
+						if(likeArrayer==true) {
+							midlertidigPoeng[i] = 20;
+							poengEl[i].innerHTML = midlertidigPoeng[i];
+							poengEl[i].addEventListener("click", leggTil);
+							poengEl[i].className = "poengValg";
+							stryk = false;
+						}
+					}
+					if(i==14 && poengEl[i].className!=="laast") { //hus
+						for(var k=0;k<terninger.length;k++) {
+							for(var j=0;j<terninger.length;j++) {
+								if(terninger[k]==terninger[j] && k!==j) {
+									for(var s=0;s<terninger.length;s++) {
+										if(terninger[s]==terninger[j] && s!==j && s!==k) {
+											var hus1 = terninger[k]+terninger[j]+terninger[s];
+											var hus2 = skjekkHus(hus1);
+											if(isNaN(hus2)) {} //hvis ikke funksjonen skjekkHus returnerer et tall, skal det ikke beregnes poeng
+											else {
+												midlertidigPoeng[i] = hus1+hus2;
+												poengEl[i].innerHTML = midlertidigPoeng[i];
+												poengEl[i].addEventListener("click", leggTil);
+												poengEl[i].className = "poengValg";
+												stryk = false;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					if(i==15 && poengEl[i].className!=="laast") { //sjanse
+						midlertidigPoeng[i]=terninger.reduce(terningerSum); //summerer tallene i terninger-arrayen
+						poengEl[i].innerHTML = midlertidigPoeng[i];
+						poengEl[i].addEventListener("click", leggTil);
+						poengEl[i].className = "poengValg";
+						stryk = false;
+					}
+					if(i==16 && poengEl[i].className!=="laast") { //yatzy
+						var skjekkYatzy = terninger.every(sammeTall); //skjekker om alle tallene i terninger-arrayen er like
+						if(skjekkYatzy == true) {
+							midlertidigPoeng[i] = 50;
+							poengEl[i].innerHTML = midlertidigPoeng[i];
+							poengEl[i].addEventListener("click", leggTil);
+							poengEl[i].className = "poengValg";
+							stryk = false;
+						}
+					}					
+				}
+				if(stryk==true) {
+					for(var i=0;i<poengEl.length;i++) {
+						if(poengEl[i].className!=="laast" && i!==6 && i!==7 && i!==17) {
+							poengEl[i].innerHTML = 0;
+							poengEl[i].className = "strykValg";
+							poengEl[i].addEventListener("click", leggTil);
+						}
+					}
+				}
+			}
+			function skjekkArrayer(arr1, arr2) {					
+				for(var k=0;k<arr1.length; k++) { //skjekker om arrayene er like
+					if (arr1[k] !== arr2[k]) {
+						return false; //hvis de ikke er det: return false
+					} 
+				}		
+				return true; //hvis de er det: return true							
+			}
+			function skjekkHus(hus1) {
+				for(var k=0;k<terninger.length;k++) {
+					for(var j=0;j<terninger.length;j++) {
+						if(terninger[k]==terninger[j] && k!==j && 3*terninger[k]!==hus1) {
+							return terninger[k]+terninger[j];
+						}
+					}
+				}
+			}
+			function terningerSum(total, tall) {
+				return total + tall;
+			}
+			function sammeTall(a, index, arr) {
+				if(index==0) {
+					return true;
+				}
+				else {
+					return (a == arr[index - 1]);
+				}
+			}
+			function leggTil(e) {
+				runder++;
+				var sum = 0;
+				antallKast = 3;
+				underoverskriftEl.innerHTML = antallKast + " kast igjen";
+				var laastPoeng = Number(e.target.innerHTML);
+				for(var i=0;i<poengEl.length;i++) {
+					poengEl[i].removeEventListener("click", leggTil);
+					if(poengEl[i].className!=="laast" && i!==6 && i!==7 && i!==17) { //hvis ikke poengfeltet er låst eller sum/bonus/totalsum skal de resettes på neste runde
+						poengEl[i].innerHTML = "";
+						poengEl[i].className = "poeng";
+					}
+				}
+				e.target.innerHTML = laastPoeng;
+				e.target.className = "laast";
+				for(var i=0;i<6;i++) {
+					if(poengEl[i].className == "laast") { //legger sammen poengsummen for enere til seksere
+						sum += Number(poengEl[i].innerHTML);
+						fullfort[i] = true;
+					}
+				}
+				var nullBonus = fullfort.every(skjekkFullfort);
+				//console.log(nullBonus);
+				if(sum!==0) {
+					poengEl[6].innerHTML = sum;
+				}
+				if(sum>=63 && utfortBonus == false) { //legger til bonus. Bruker utfortBonus variabelen til å kun legge til bonuspoeng en gang
+					utfortBonus = true; 
+					poengEl[7].innerHTML = 50;
+					poengEl[7].className = "laast";
+					totalSum += 50;
+				}
+				if(nullBonus==true) {
+					poengEl[6].className = "laast"; //låser sum feltet når øvre halvdel er fyllt ut
+					if(utfortBonus==false) { //hvis man ikke får nok poeng for bonus, blir feltet låst
+						poengEl[7].innerHTML = 0;
+						poengEl[7].className = "laast";
+					}
+				}
+				totalSum += laastPoeng;
+				poengEl[17].innerHTML = totalSum;
+				if(runder==15) {
+					for(var i=0;i<poengEl.length-1;i++) {
+						poengEl[i].className="poeng";
+					}
+					poengEl[17].className="laast";
+					underoverskriftEl.innerHTML = "Spillet er over";
+				} 
+				else {
+					for(var i=0;i<terningerEl.length;i++) {
+						terningerEl[i].className = "terningbilde";
+					}
+					kastKnappEl.addEventListener("click", kast);
+					kastKnappEl.style.cursor="pointer";
+				}
+				
+				//console.log(fullfort);
+			}
+			function skjekkFullfort(fullfort) {
+				return fullfort == true;
+			}
+		}
+		</script>
+    </body>
+</html>
